@@ -1,52 +1,28 @@
 package com.kit.homework21;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import com.kit.core.WebDriverTestBase;
+import com.kit.pages.hometask.StylusHomePage;
+import com.kit.pages.hometask.StylusResultPage;
 import org.testng.annotations.Test;
-
-import java.util.concurrent.TimeUnit;
 
 import static org.testng.AssertJUnit.assertTrue;
 
 /**
  * Created by Tas_ka on 6/6/2017.
  */
-public class Stylus {
+public class Stylus extends WebDriverTestBase{
 
-    private String stylusSearch;
-    private WebDriver webDriver;
-
-    @BeforeClass
-    public void setUp(){
-        System.setProperty("webdriver.chrome.driver",
-                "C:\\Users\\Tas_ka\\repos\\src\\main\\resources\\chromedriver.exe");
-        webDriver = new ChromeDriver();
-        stylusSearch = "https://www.stylus.com.ua/";
-        webDriver.get(stylusSearch);
-        webDriver.manage().window().maximize();
-        webDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    }
+    private String stylusSearch = "https://stylus.ua";
+    private String searchText = "Sony Z2";
 
     @Test
-    public void searchTest(){
-        String searchText = "Sony Z2";
-        By searchLocator = By.xpath("//input[@name='q']");
-        WebElement searchField = webDriver.findElement(searchLocator);
-        searchField.sendKeys(searchText);
-        searchField.submit();
-        By linkLocator = By.xpath("//a[@data-name='Sony Xperia Z2 Black']");
-        WebElement link = webDriver.findElement(linkLocator);
-        assertTrue(link.isDisplayed());
-        // assertTrue(link.getText().contains(searchText));
-    }
-
-    @AfterClass
-    public void tearDown(){
-        webDriver.quit();
+    public void stylusTest() {
+        // GoogleSearchPage googleSearchPage = PageFactory.initElements(webDriver, GoogleSearchPage.class);
+        StylusHomePage stylusHomePage = new StylusHomePage(webDriver);
+        stylusHomePage.open(stylusSearch);
+        stylusHomePage.fillAndSubmitSearchData(searchText);
+        StylusResultPage stylusResultPage = new StylusResultPage(webDriver);
+        assertTrue("Current link text is "+stylusResultPage.getLinkText()+" should be " + searchText,stylusResultPage.getLinkText().contains(searchText));
     }
 }
 

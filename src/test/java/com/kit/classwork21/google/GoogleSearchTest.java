@@ -1,47 +1,34 @@
 package com.kit.classwork21.google;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.testng.annotations.BeforeClass;
+import com.kit.core.WebDriverTestBase;
+import com.kit.pages.google.GoogleSearchPage;
+import com.kit.pages.google.GoogleSearchResultPage;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+import ru.yandex.qatools.allure.annotations.Description;
+import ru.yandex.qatools.allure.annotations.Features;
+import ru.yandex.qatools.allure.annotations.Stories;
+import ru.yandex.qatools.allure.annotations.Title;
 
-import java.util.concurrent.TimeUnit;
+import static org.testng.AssertJUnit.assertTrue;
 
-import static com.sun.jmx.snmp.ThreadContext.contains;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+@Features("searhTest")
+@Stories("WEB-777")
+@Listeners({com.kit.core.TestListener.class})
+public class GoogleSearchTest extends WebDriverTestBase {
+    private String googleSearch = "https://www.google.com/";
+    private String searchText = "Selenium";
 
-/**
- * Created by Tas_ka on 6/2/2017.
- */
-public class GoogleSearchTest {
-
-    private String googleSearch;
-    private WebDriver webDriver;
-
-    @BeforeClass
-    public void setUp(){
-        System.setProperty("webdriver.chrome.driver",
-                "C:\\Users\\Tas_ka\\repos\\src\\main\\resources\\chromedriver.exe");
-        webDriver = new ChromeDriver();
-        googleSearch = "https://www.google.com.ua/";
-        webDriver.get(googleSearch);
-        webDriver.manage().window().maximize();
-        webDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    }
-
+    @Title("Google search test - positive scenario")
+    @Description("Searches any text on google.com")
     @Test
-    public void searchTest(){
-        String searchText = "Selenium";
-        By searchLocator = By.name("q");
-        WebElement searchField = webDriver.findElement(searchLocator);
-        searchField.sendKeys(searchText);
-        searchField.submit();
-        By linkLocator = By.xpath(".//*[@id='rso']/div[2]/div/div[1]/div/div/h3/a");
-        WebElement link = webDriver.findElement(linkLocator);
-        assertTrue(link.getText().contains(searchText));
+    public void searchTest() {
+      // GoogleSearchPage googleSearchPage = PageFactory.initElements(webDriver, GoogleSearchPage.class);
+        GoogleSearchPage googleSearchPage = new GoogleSearchPage(webDriver);
+        googleSearchPage.open(googleSearch);
+        googleSearchPage.fillAndSubmitSearchData(searchText);
+        GoogleSearchResultPage googleSearchResultPage = new GoogleSearchResultPage(webDriver);
+
+        assertTrue(googleSearchResultPage.getLinkText().contains(searchText));
     }
 }

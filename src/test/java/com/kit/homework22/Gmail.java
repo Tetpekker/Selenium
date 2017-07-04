@@ -1,5 +1,8 @@
 package com.kit.homework22;
 
+import com.kit.core.WebDriverTestBase;
+import com.kit.pages.gmail.GmailInboxPage;
+import com.kit.pages.gmail.GmailLoginPage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -16,45 +19,26 @@ import static org.testng.AssertJUnit.assertTrue;
 /**
  * Created by Tas_ka on 6/8/2017.
  */
-public class Gmail {
+public class Gmail extends WebDriverTestBase {
 
-    private String gmail;
-    private WebDriver webDriver;
+    private String gmailPage = "https://gmail.com";
+    private String gmailUserName = "solodkagannusya@gmail.com";
+    private String gmailPassword = "zxcvb1986";
 
-    @BeforeClass
-    public void setUp(){
-        System.setProperty("webdriver.chrome.driver",
-                "C:\\Users\\Tas_ka\\repos\\src\\main\\resources\\chromedriver.exe");
-        webDriver = new ChromeDriver();
-        gmail = "https://www.google.com/intl/uk/gmail/about/";
-        webDriver.get(gmail);
-        webDriver.manage().window().maximize();
-        webDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+    @Test
+    public void t001GmailLogin(){
+        GmailLoginPage gmailLoginPage = new GmailLoginPage(webDriver);
+        gmailLoginPage.open(gmailPage);
+        gmailLoginPage.loginToGmail(gmailUserName, gmailPassword);
+        GmailInboxPage gmailInboxPage = new GmailInboxPage(webDriver);
+        assertTrue(gmailInboxPage.isLoggedIn());
     }
 
     @Test
-    public void gmailEnter(){
-
-        webDriver.findElement(By.xpath("html/body/nav/div/a[2]")).click();
-        webDriver.findElement(By.xpath("//*[@id='identifierId']")).click();
-        webDriver.findElement(By.xpath("//*[@id='identifierId']")).sendKeys("solodkagannusya@gmail.com");
-        webDriver.findElement(By.xpath("//*[@id='identifierId']")).sendKeys(Keys.ENTER);
-//        webDriver.findElement(By.xpath("//*[@id='password']/div[1]/div/div[1]/input")).click();
-        webDriver.findElement(By.xpath("//input[@autocomplete='current-password']")).sendKeys("zxcvb1986");
-        webDriver.findElement(By.xpath("//input[@autocomplete='current-password']")).sendKeys(Keys.ENTER);
-
-        By linkLocator = By.xpath("//*[@id=':82']/div/div[2]/span/a");
-        WebElement link = webDriver.findElement(linkLocator);
-        assertTrue(link.isDisplayed());
+    public void t002GmailLoout(){
+        GmailInboxPage gmailInboxPage = new GmailInboxPage(webDriver);
+        gmailInboxPage.logOut();
     }
 
-    @AfterClass
-    public void logOut(){
-        webDriver.findElement(By.xpath("//*[@id='gb']/div[1]/div[1]/div[2]/div[4]/div[1]/a/span")).click();
-        webDriver.findElement(By.xpath("//*[@id='gb_71']")).click();
-    }
 
-    public void tearDown(){
-        webDriver.quit();
-    }
 }
